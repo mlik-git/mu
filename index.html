@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>简洁音乐网站</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="src/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
-    
-        
+
+
 </head>
 <body>
     <nav>
-        <img src="src.png" alt="网站Logo" style="height: 100px;">
+        <img src="src/src.png" alt="网站Logo" style="height: 100px;">
         <ul>
-            <li><a href="#">首页</a></li>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="song.html">班歌</a></li>
             <li><a href="#">关于</a></li>
             <li><a href="#">举报</a></li>
             <li><a href="#">支持</a></li>
@@ -25,7 +26,6 @@
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="搜索歌曲...">
             </div>
-            <audio controls id="audio-player"></audio>
             <div class="song-list" id="song-list">
                 <!-- 歌曲列表将通过JavaScript动态生成 -->
             </div>
@@ -35,7 +35,6 @@
     <script>
         // 初始化播放器
         document.addEventListener('DOMContentLoaded', function() {
-            const player = document.getElementById('audio-player');
             const songList = document.getElementById('song-list');
 
             // 获取audio文件夹中的所有MP3文件
@@ -93,7 +92,7 @@
                 '晴天-周杰伦.mp3',
                 '月牙湾-F.I.R.飞儿乐团.mp3',
                 '有何不可-许嵩.mp3',
-                '杨宗纬 - 这一路走来.mp3',
+                '杨宗viewport - 这一路走来.mp3',
                 '林俊杰 - 美人鱼.mp3',
                 '桥边姑娘-海伦.mp3',
                 '清明雨上-许嵩.mp3',

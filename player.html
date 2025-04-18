@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐播放器</title>
+    <title>播放器 - 简洁音乐网站</title>
+    <link rel="icon" href="src/favicon.ico" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -14,508 +15,215 @@
         body {
             font-family: 'Arial', sans-serif;
             min-height: 100vh;
-            color: white;
-            position: relative;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        #background {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 100%;
-            max-height: 100vh;
-            z-index: -1;
-        }
-
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: -1;
-        }
-
-        .player-container {
-            height: 100vh;
+            background: linear-gradient(135deg, #4568dc 0%, #b06ab3 100%);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 2rem;
+            padding: 20px;
+            position: relative;
         }
 
-        .song-info {
-            text-align: center;
-            margin-top: 30vh;
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            margin-bottom: 100px;
         }
 
-        .song-title {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .song-artist {
-            font-size: 1.5rem;
-            opacity: 0.8;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .control-btn i {
-            font-size: 1.5rem;
+        .title {
             color: white;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .home-btn {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-
-        .home-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .progress-container {
+        #audio-container, #video-container {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
+            padding: 15px;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
         }
 
-        .progress-bar {
+        video, audio {
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
             cursor: pointer;
-            position: relative;
+            font-size: 1em;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
 
-        .progress {
-            height: 100%;
-            background: white;
-            border-radius: 3px;
-            width: 0%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: width 0.1s linear;
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
-        .time-display {
+        .background-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .radio-label:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .radio-label input {
+            margin-right: 5px;
+        }
+
+        #audio-container.hidden, #video-container.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <img id="background" src="" alt="background" onerror="this.style.display='none';document.body.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
-    <div class="overlay"></div>
-    <div class="player-container">
-        <div class="song-info">
-            <h1 class="song-title" id="song-title">歌曲名称</h1>
-            <p class="song-artist" id="song-artist">歌手</p>
+    <button class="back-button" onclick="window.location.href='index.html'">返回</button>
+    <div class="background-selector">
+        <label class="radio-label">
+            <input type="radio" name="background-type" value="img"> 动漫
+        </label>
+        <label class="radio-label">
+            <input type="radio" name="background-type" value="img-health" checked> 风景
+        </label>
+    </div>
+    <div class="container">
+        <h1 class="title" id="content-title">加载中...</h1>
+        <div id="audio-container">
+            <audio controls autoplay id="audioPlayer">
+                <source src="" type="audio/mpeg">
+                您的浏览器不支持音频播放。
+            </audio>
         </div>
-
-        <div class="controls">
-            <button class="control-btn" id="prev-btn">
-                <i>⏮</i>
-            </button>
-            <button class="control-btn" id="play-btn">
-                <i>▶</i>
-            </button>
-            <button class="control-btn" id="next-btn">
-                <i>⏭</i>
-            </button>
-        </div>
-
-        <button class="home-btn" onclick="window.location.href='index.html'">
-            <i>➜</i>
-        </button>
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar">
-                <div class="progress" id="progress"></div>
-            </div>
-            <div class="time-display">
-                <span id="current-time">0:00</span>
-                <span id="duration">0:00</span>
-            </div>
+        <div id="video-container">
+            <video controls autoplay id="videoPlayer">
+                <source src="" type="video/mp4">
+                您的浏览器不支持视频播放。
+            </video>
         </div>
     </div>
 
-    <audio id="audio-player" hidden></audio>
-
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const songFile = urlParams.get('song');
+            const songName = urlParams.get('name');
+            const videoFile = urlParams.get('video');
+            const videoTitle = urlParams.get('title');
+            const titleElement = document.getElementById('content-title');
+            const audioContainer = document.getElementById('audio-container');
+            const videoContainer = document.getElementById('video-container');
+
+            // 添加背景类型切换事件监听
+            document.querySelectorAll('input[name="background-type"]').forEach(radio => {
+                radio.addEventListener('change', loadBackgroundImage);
+            });
+
+            if (songFile && songName) {
+                // 音频播放模式
+                audioContainer.classList.remove('hidden');
+                videoContainer.classList.add('hidden');
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = songFile;
+                titleElement.textContent = decodeURIComponent(songName);
+                audioPlayer.load();
+            } else if (videoFile && videoTitle) {
+                // 视频播放模式
+                videoContainer.classList.remove('hidden');
+                audioContainer.classList.add('hidden');
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoPlayer.querySelector('source').src = 'video/' + videoFile;
+                titleElement.textContent = decodeURIComponent(videoTitle);
+                videoPlayer.load();
+            } else {
+                console.error('无效的参数');
+                window.location.href = 'index.html';
+            }
+        });
+
         // 设置背景图
         function loadBackgroundImage() {
             const img = document.getElementById('background');
-            img.style.display = 'none';
-            
-            // 获取img文件夹中的所有图片
-            const backgroundImages = [
-                'img/横图-3340x2080-1744527102073.avif',
-                'img/横图-3508x2420-1744533154986.avif',
-                'img/横图-3684x2200-1744527333601.avif',
-                'img/横图-3750x2250-1744527394008.avif',
-                'img/横图-3840x2160-1744526610392.avif',
-                'img/横图-3840x2160-1744527008172.avif',
-                'img/横图-3840x2160-1744527034017.avif',
-                'img/横图-3840x2160-1744527324671.avif',
-                'img/横图-3840x2160-1744527358213.avif',
-                'img/横图-3840x2160-1744527471710.avif',
-                'img/横图-3840x2160-1744533258947.avif',
-                'img/横图-3940x2160-1744527176768.avif',
-                'img/横图-3945x2208-1744526419053.avif',
-                'img/横图-4000x2250-1744533313153.avif',
-                'img/横图-4000x2287-1744526728121.avif',
-                'img/横图-4000x2390-1744527443444.avif',
-                'img/横图-4000x2478-1744526637244.avif',
-                'img/横图-4000x2500-1744526555321.avif',
-                'img/横图-4040x2310-1744526618039.avif',
-                'img/横图-4050x2400-1744527198651.avif',
-                'img/横图-4096x2500-1744526489893.avif',
-                'img/横图-4202x2480-1744533226327.avif',
-                'img/横图-4204x2968-1744527044295.avif',
-                'img/横图-4260x2923-1744526545047.avif',
-                'img/横图-4446x3424-1744526710943.avif',
-                'img/横图-4608x2592-1744526570492.avif',
-                'img/横图-4608x2592-1744527298280.avif',
-                'img/横图-4693x2294-1744526989214.avif',
-                'img/横图-4800x2700-1744526999713.avif',
-                'img/横图-4800x3000-1744526478819.avif',
-                'img/横图-4800x3396-1744533271361.avif',
-                'img/横图-4807x2812-1744526451525.avif',
-                'img/横图-4965x2793-1744526695778.avif',
-                'img/横图-4970x2870-1744527026051.avif',
-                'img/横图-4992x3328-1744527252811.avif',
-                'img/横图-5000x2812-1744527225108.avif',
-                'img/横图-5040x2160-1744527092184.avif',
-                'img/横图-5082x3000-1744533290331.avif',
-                'img/横图-5120x2880-1744526469613.avif',
-                'img/横图-5320x2660-1744526719041.avif',
-                'img/横图-5333x3000-1744527142146.avif',
-                'img/横图-5364x3938-1744526970188.avif',
-                'img/横图-5700x3368-1744533188906.avif',
-                'img/横图-5760x3240-1744526524089.avif',
-                'img/横图-6000x3375-1744533169805.avif',
-                'img/横图-6132x4320-1744533143872.avif',
-                'img/横图-6240x3510-1744526655031.avif',
-                'img/横图-6958x3558-1744526596206.avif',
-                'img/横图-7254x3298-1744526627038.avif',
-                'img/横图-8640x4860-1744526535437.avif'
-            ];
-            
-            // 从localStorage获取或初始化图片权重
-            let imageWeights = JSON.parse(localStorage.getItem('imageWeights')) || {};
-            
-            // 为每个用户生成唯一ID
-            const userId = localStorage.getItem('userId') || Math.random().toString(36).substring(2);
-            if (!localStorage.getItem('userId')) {
-                localStorage.setItem('userId', userId);
+            if (!img) {
+                const newImg = document.createElement('img');
+                newImg.id = 'background';
+                newImg.style.position = 'fixed';
+                newImg.style.top = '0';
+                newImg.style.left = '0';
+                newImg.style.width = '100%';
+                newImg.style.height = '100%';
+                newImg.style.objectFit = 'cover';
+                newImg.style.zIndex = '-1';
+                document.body.appendChild(newImg);
             }
             
-            // 初始化或更新权重
-            if (!imageWeights[userId]) {
-                imageWeights[userId] = {};
-                backgroundImages.forEach(img => {
-                    imageWeights[userId][img] = 1;
+            const backgroundType = document.querySelector('input[name="background-type"]:checked').value;
+            const imgPath = backgroundType === 'img' ? 'img/' : 'img-health/';
+            const imgElement = document.getElementById('background');
+            imgElement.style.display = 'none';
+            
+            fetch(imgPath)
+                .then(response => response.text())
+                .then(text => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, 'text/html');
+                    const images = Array.from(doc.querySelectorAll('a'))
+                        .map(a => a.href)
+                        .filter(href => href.match(/\.(jpg|jpeg|png|gif|avif)$/i))
+                        .map(href => href.split('/').pop());
+                    
+                    if (images.length > 0) {
+                        const randomImage = images[Math.floor(Math.random() * images.length)];
+                        imgElement.src = imgPath + randomImage;
+                        imgElement.onload = () => imgElement.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('背景图加载失败:', error);
+                    imgElement.style.display = 'none';
+                    document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                 });
-            }
-            
-            // 根据权重选择图片
-            const weights = backgroundImages.map(img => imageWeights[userId][img] || 1);
-            const totalWeight = weights.reduce((a, b) => a + b, 0);
-            let random = Math.random() * totalWeight;
-            
-            let selectedIndex = 0;
-            for (let i = 0; i < weights.length; i++) {
-                random -= weights[i];
-                if (random <= 0) {
-                    selectedIndex = i;
-                    break;
-                }
-            }
-            
-            const selectedImage = backgroundImages[selectedIndex];
-            
-            // 更新权重
-            imageWeights[userId][selectedImage] = Math.max(0.1, (imageWeights[userId][selectedImage] || 1) * 0.8);
-            localStorage.setItem('imageWeights', JSON.stringify(imageWeights));
-            
-            img.src = selectedImage;
-            
-            img.onload = () => {
-                img.style.display = 'block';
-            };
-            
-            img.onerror = () => {
-                console.error('背景图加载失败');
-                img.style.display = 'none';
-                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            };
         }
         
         loadBackgroundImage();
-        
-        // 定义mp3Files数组
-        const mp3Files = [
-            'Five Hundred Miles-纯音乐.mp3',
-            'Fly Away-F.I.R.飞儿乐团.mp3',
-            'Soul seeker.mp3',
-            'You(=I).mp3',
-            'counting stars.mp3',
-            '七里香-周杰伦.mp3',
-            '不能说的秘密-周杰伦.mp3',
-            '东风破-周杰伦.mp3',
-            '你的万水千山-海来阿木.mp3',
-            '你的微笑-F.I.R.飞儿乐团.mp3',
-            '你若成风-许嵩.mp3',
-            '偏向-陈子晴.mp3',
-            '偏爱-张芸京.mp3',
-            '兰亭序-周杰伦.mp3',
-            '关不上的窗-周传雄.mp3',
-            '冬天的秘密-周传雄.mp3',
-            '凑热闹-BY2.mp3',
-            '刘德华 - 忘情水.mp3',
-            '千年之恋-F.I.R.飞儿乐团.mp3',
-            '千百度-许嵩.mp3',
-            '半城烟沙-许嵩.mp3',
-            '半岛铁盒-周杰伦.mp3',
-            '发如雪-周杰伦.mp3',
-            '听妈妈的话-周杰伦.mp3',
-            '告白气球-周杰伦.mp3',
-            '城府-许嵩.mp3',
-            '夜曲-周杰伦.mp3',
-            '大海-杨培安.mp3',
-            '如果当时-许嵩.mp3',
-            '姑娘别哭泣-柯柯柯啊.mp3',
-            '室内系的truckmaker.mp3',
-            '富士山下-陈奕迅.mp3',
-            '平凡之路-朴树.mp3',
-            '幻听-许嵩.mp3',
-            '庐州月-许嵩.mp3',
-            '张信哲 - 爱就一个字.mp3',
-            '张学友 - 一千个伤心的理由.mp3',
-            '张学友 - 如果这都不算爱.mp3',
-            '张杰、张碧晨 - 只要平凡.mp3',
-            '徐良、阿悄 - 犯贱.mp3',
-            '恋人心-魏新雨.mp3',
-            '惊鸿一面-许嵩&黄龄.mp3',
-            '想起了你-程响.mp3',
-            '挪威的森林-伍佰.mp3',
-            '搁浅-周杰伦.mp3',
-            '断桥残雪-许嵩.mp3',
-            '新娘不是我-程响.mp3',
-            '时光洪流-程响.mp3',
-            '明明就-周杰伦.mp3',
-            '星星点灯-郑智化.mp3',
-            '晴天-周杰伦.mp3',
-            '月牙湾-F.I.R.飞儿乐团.mp3',
-            '有何不可-许嵩.mp3',
-            '杨宗纬 - 这一路走来.mp3',
-            '林俊杰 - 美人鱼.mp3',
-            '桥边姑娘-海伦.mp3',
-            '清明雨上-许嵩.mp3',
-            '灰色头像-许嵩.mp3',
-            '烟花易冷-周杰伦.mp3',
-            '爱情转移-陈奕迅.mp3',
-            '爱的魔法.mp3',
-            '牧马城市.mp3',
-            '王妃-萧敬腾.mp3',
-            '玫瑰花的葬礼-许嵩.mp3',
-            '珊瑚海-周杰伦&Lara梁心颐.mp3',
-            '甜甜的-周杰伦.mp3',
-            '童年老家-马建涛.mp3',
-            '第一次爱的人-王心凌.mp3',
-            '简单爱-周杰伦.mp3',
-            '素颜-许嵩&何曼婷.mp3',
-            '红日-李克勤.mp3',
-            '给我一首歌的时间-周杰伦.mp3',
-            '绿光-孙燕姿.mp3',
-            '花海-周杰伦.mp3',
-            '花香-周传雄.mp3',
-            '莫文蔚 - 这世界那么多人.mp3',
-            '菊花台-周杰伦.mp3',
-            '蒲公英的约定-周杰伦.mp3',
-            '蓝色土耳其-周传雄.mp3',
-            '蜗牛-周杰伦.mp3',
-            '许嵩 - 断桥残雪.mp3',
-            '许巍 - 曾经的你.mp3',
-            '说好的幸福呢-周杰伦.mp3',
-            '说爱你-蔡依林.mp3',
-            '轨迹-周杰伦.mp3',
-            '野人-许嵩.mp3',
-            '陪我过个冬-李嘉嘉.mp3',
-            '雅俗共赏-许嵩.mp3',
-            '霍元甲-周杰伦.mp3',
-            '青花-周传雄.mp3',
-            '青花瓷-周杰伦.mp3',
-            '麻雀-李荣浩.mp3'
-        ];
-
-        // 从URL参数获取歌曲信息
-        const urlParams = new URLSearchParams(window.location.search);
-        const songFile = urlParams.get('song');
-        const songName = urlParams.get('name') || songFile.replace('.mp3', '').replace('audio/', '');
-
-        // 设置歌曲信息
-        document.getElementById('song-title').textContent = songName;
-        const audioPlayer = document.getElementById('audio-player');
-        if (songFile && !songFile.startsWith('http') && !songFile.startsWith('/')) {
-            audioPlayer.src = songFile;
-            console.log('设置音频源:', songFile);
-        } else {
-            console.error('无效的音频路径:', songFile);
-            alert('无效的音频路径，请返回首页重新选择歌曲');
-        }
-
-        // 从歌曲名称提取艺术家信息
-        const artistMatch = songName.match(/-(.*?)$/);
-        if (artistMatch && artistMatch[1]) {
-            document.getElementById('song-artist').textContent = artistMatch[1].trim();
-        } else {
-            document.getElementById('song-artist').textContent = '未知艺术家';
-        }
-
-        // 添加音频加载状态检查和错误处理
-        audioPlayer.addEventListener('error', function() {
-            console.error('音频加载失败:', songFile);
-            alert('音频加载失败，请检查文件路径');
-        });
-
-        audioPlayer.addEventListener('canplaythrough', function() {
-            console.log('音频已加载完成，可以播放');
-        });
-
-        // 播放器控制逻辑
-        const playBtn = document.getElementById('play-btn');
-        const progress = document.getElementById('progress');
-        const progressBar = document.getElementById('progress-bar');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
-
-        // 播放/暂停
-        playBtn.addEventListener('click', function() {
-            if (audioPlayer.paused) {
-                const playPromise = audioPlayer.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        playBtn.innerHTML = '<i>⏸</i>';
-                    }).catch(error => {
-                        console.error('播放失败:', error);
-                        alert('播放失败，请检查音频文件');
-                    });
-                }
-            } else {
-                audioPlayer.pause();
-                playBtn.innerHTML = '<i>▶</i>';
-            }
-        });
-
-        // 上一首按钮
-        const prevBtn = document.getElementById('prev-btn');
-        prevBtn.addEventListener('click', () => {
-            const currentIndex = mp3Files.indexOf(songFile.replace('audio/', ''));
-            const prevIndex = (currentIndex - 1 + mp3Files.length) % mp3Files.length;
-            const prevFile = mp3Files[prevIndex];
-            window.location.href = `player.html?song=audio/${encodeURIComponent(prevFile)}&name=${encodeURIComponent(prevFile.replace('.mp3', ''))}`;
-        });
-
-        // 下一首按钮
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.addEventListener('click', () => {
-            const currentIndex = mp3Files.indexOf(songFile.replace('audio/', ''));
-            const nextIndex = (currentIndex + 1) % mp3Files.length;
-            const nextFile = mp3Files[nextIndex];
-            window.location.href = `player.html?song=audio/${encodeURIComponent(nextFile)}&name=${encodeURIComponent(nextFile.replace('.mp3', ''))}`;
-        });
-
-        // 更新进度条
-        audioPlayer.addEventListener('timeupdate', updateProgress);
-
-        // 点击进度条跳转
-        progressBar.addEventListener('click', (e) => {
-            const width = progressBar.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audioPlayer.duration;
-            audioPlayer.currentTime = (clickX / width) * duration;
-        });
-
-        // 歌曲结束时
-        audioPlayer.addEventListener('ended', () => {
-            playBtn.innerHTML = '<i>▶</i>';
-            // 自动播放下一首
-            nextBtn.click();
-        });
-
-        function updateProgress() {
-            const { duration, currentTime } = audioPlayer;
-            const progressPercent = (currentTime / duration) * 100;
-            progress.style.width = `${progressPercent}%`;
-
-            // 更新时间显示
-            const durationMinutes = Math.floor(duration / 60);
-            let durationSeconds = Math.floor(duration % 60);
-            if (durationSeconds < 10) durationSeconds = `0${durationSeconds}`;
-
-            const currentMinutes = Math.floor(currentTime / 60);
-            let currentSeconds = Math.floor(currentTime % 60);
-            if (currentSeconds < 10) currentSeconds = `0${currentSeconds}`;
-
-            if (duration) {
-                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
-                currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
-            }
-        }
     </script>
 </body>
 </html>
